@@ -1,4 +1,4 @@
-module github.com/yourorg/scd-abstraction
+module github.com/yourorg/Go
 
 go 1.24.5
 

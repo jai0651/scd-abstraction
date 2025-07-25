@@ -1,7 +1,7 @@
 package repos
 
 import (
-	"github.com/yourorg/scd-abstraction/models"
+	"github.com/yourorg/Go/models"
 	"gorm.io/gorm"
 )
 
@@ -27,4 +27,4 @@ func (r *JobRepo) FindActiveJobsByContractor(contractorID string) ([]models.Job,
 		Where("jobs.status = ? AND jobs.contractor_id = ?", "active", contractorID).
 		Find(&jobs).Error
 	return jobs, err
-} 
+}

@@ -1,14 +1,14 @@
 package benchmark
 
 import (
-	"testing"
-	"time"
-	"github.com/yourorg/scd-abstraction/models"
-	"github.com/yourorg/scd-abstraction/repos"
+	"fmt"
+	"github.com/yourorg/Go/models"
+	"github.com/yourorg/Go/repos"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
-	"fmt"
+	"testing"
+	"time"
 )
 
 func setupDB(b *testing.B) *gorm.DB {
@@ -37,12 +37,12 @@ func seedMillion(db *gorm.DB) {
 		}
 		db.Create(&job)
 		timelog := models.Timelog{
-			Versioned:  models.Versioned{ID: fmt.Sprintf("tl%d", i), Version: 1, UID: fmt.Sprintf("tl-uid-%d", i)},
-			Duration:   8,
-			TimeStart:  time.Now().Add(-2 * time.Hour),
-			TimeEnd:    time.Now().Add(-1 * time.Hour),
-			Type:       "work",
-			JobUID:     fmt.Sprintf("job-uid-%d", i),
+			Versioned: models.Versioned{ID: fmt.Sprintf("tl%d", i), Version: 1, UID: fmt.Sprintf("tl-uid-%d", i)},
+			Duration:  8,
+			TimeStart: time.Now().Add(-2 * time.Hour),
+			TimeEnd:   time.Now().Add(-1 * time.Hour),
+			Type:      "work",
+			JobUID:    fmt.Sprintf("job-uid-%d", i),
 		}
 		db.Create(&timelog)
 		pli := models.PaymentLineItem{
@@ -85,4 +85,4 @@ func BenchmarkRepoQueries(b *testing.B) {
 			pliRepo.FindLineItemsByContractorAndPeriod("cont1", from, to)
 		}
 	})
-} 
+}

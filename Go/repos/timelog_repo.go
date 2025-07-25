@@ -1,7 +1,7 @@
 package repos
 
 import (
-	"github.com/yourorg/scd-abstraction/models"
+	"github.com/yourorg/Go/models"
 	"gorm.io/gorm"
 	"time"
 )
@@ -19,4 +19,4 @@ func (r *TimelogRepo) FindTimelogsByContractorAndPeriod(contractorID string, fro
 		Where("jobs.contractor_id = ? AND timelogs.time_start >= ? AND timelogs.time_end <= ?", contractorID, from, to).
 		Find(&timelogs).Error
 	return timelogs, err
-} 
+}

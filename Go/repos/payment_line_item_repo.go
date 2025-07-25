@@ -1,7 +1,7 @@
 package repos
 
 import (
-	"github.com/yourorg/scd-abstraction/models"
+	"github.com/yourorg/Go/models"
 	"gorm.io/gorm"
 	"time"
 )
@@ -20,4 +20,4 @@ func (r *PaymentLineItemRepo) FindLineItemsByContractorAndPeriod(contractorID st
 		Where("jobs.contractor_id = ? AND timelogs.time_start >= ? AND timelogs.time_end <= ?", contractorID, from, to).
 		Find(&items).Error
 	return items, err
-} 
+}

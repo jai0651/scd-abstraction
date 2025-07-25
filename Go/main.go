@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/yourorg/scd-abstraction/models"
-	"github.com/yourorg/scd-abstraction/repos"
+	"github.com/yourorg/Go/models"
+	"github.com/yourorg/Go/repos"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -77,12 +77,12 @@ func seedData(db *gorm.DB) {
 	db.Create(&job)
 	// Seed timelog
 	timelog := models.Timelog{
-		Versioned:  models.Versioned{ID: "tl1", Version: 1, UID: "tl-uid-1"},
-		Duration:   8,
-		TimeStart:  time.Now().Add(-2 * time.Hour),
-		TimeEnd:    time.Now().Add(-1 * time.Hour),
-		Type:       "work",
-		JobUID:     "job-uid-1",
+		Versioned: models.Versioned{ID: "tl1", Version: 1, UID: "tl-uid-1"},
+		Duration:  8,
+		TimeStart: time.Now().Add(-2 * time.Hour),
+		TimeEnd:   time.Now().Add(-1 * time.Hour),
+		Type:      "work",
+		JobUID:    "job-uid-1",
 	}
 	db.Create(&timelog)
 	// Seed payment line item
@@ -94,4 +94,4 @@ func seedData(db *gorm.DB) {
 		Status:     "pending",
 	}
 	db.Create(&pli)
-} 
+}
