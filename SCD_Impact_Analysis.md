@@ -6,7 +6,7 @@ This analysis examines the performance impact of your SCD (Slowly Changing Dimen
 
 ## What This Measures
 
-This benchmark directly compares your SCD (Slowly Changing Dimension) abstraction layer against equivalent raw SQL queries that both handle versioning to measure the **actual performance impact** of the abstraction layer itself.
+This benchmark directly compares my SCD (Slowly Changing Dimension) abstraction layer against equivalent raw SQL queries that both handle versioning to measure the **actual performance impact** of the abstraction layer itself.
 
 ## Key Questions Answered
 
@@ -27,14 +27,17 @@ This benchmark directly compares your SCD (Slowly Changing Dimension) abstractio
 
 | Query Type | SCD Time | Raw SQL Time | Overhead | Assessment |
 |------------|----------|--------------|----------|------------|
-| Job By Company | 2.34ms | 2.07ms | +13.33% | ✅ Acceptable |
-| Job By Contractor | 1.92ms | 1.70ms | +13.03% | ✅ Acceptable |
+| Job By Company | 2.35ms | 1.95ms | +20.23% | ⚠️ Moderate |
+| Job By Contractor | 2.49ms | 2.13ms | +16.89% | ✅ Acceptable |
+| Latest Subquery | 123μs | 98μs | +25.51% | ⚠️ Moderate |
+| Create New Version | 665μs | 604μs | +10.10% | ✅ Acceptable |
 
 ### Core SCD Operations Performance
 
-- **Latest Subquery**: ~990μs per operation
-- **Create New Version**: ~990μs per operation
-- **Overall Assessment**: Fast and efficient
+| Operation Type | SCD Time | Raw SQL Time | Overhead | Assessment |
+|----------------|----------|--------------|----------|------------|
+| Latest Subquery | 123μs | 98μs | +25.51% | ⚠️ Moderate |
+| Create New Version | 665μs | 604μs | +10.10% | ✅ Acceptable |
 
 ## Key Findings
 

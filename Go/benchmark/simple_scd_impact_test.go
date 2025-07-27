@@ -115,36 +115,74 @@ func BenchmarkSimpleSCDCoreOperations(b *testing.B) {
 
 	fmt.Printf("\n=== SCD Core Operations Performance ===\n\n")
 
-	// Test 1: Latest Subquery Performance
+	// Test 1: Latest Subquery Performance (SCD vs Raw SQL)
 	b.Run("Latest_Subquery", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			scd.LatestSubquery(db, models.Job{})
-		}
+		// Test SCD abstraction
+		b.Run("SCD_Abstraction", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				scd.LatestSubquery(db, models.Job{})
+			}
+		})
+
+		// Test equivalent raw SQL
+		b.Run("Raw_SQL_Equivalent", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				db.Raw(`SELECT id, MAX(version) as max_version FROM jobs GROUP BY id`)
+			}
+		})
 	})
 
-	// Test 2: Create New Version Performance
+	// Test 2: Create New Version Performance (SCD vs Raw SQL)
 	b.Run("Create_New_Version", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			jobID := fmt.Sprintf("simple-test-job-%d", i)
-			jobUID := fmt.Sprintf("simple-test-job-uid-%d", i)
+		// Test SCD abstraction
+		b.Run("SCD_Abstraction", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				jobID := fmt.Sprintf("simple-test-job-%d", i)
+				jobUID := fmt.Sprintf("simple-test-job-uid-%d", i)
 
-			// Create initial version
-			job := models.Job{
-				Versioned:    models.Versioned{ID: jobID, Version: 1, UID: jobUID},
-				Status:       "active",
-				Rate:         100,
-				Title:        "Engineer",
-				CompanyID:    "comp1",
-				ContractorID: "cont1",
+				// Create initial version
+				job := models.Job{
+					Versioned:    models.Versioned{ID: jobID, Version: 1, UID: jobUID},
+					Status:       "active",
+					Rate:         100,
+					Title:        "Engineer",
+					CompanyID:    "comp1",
+					ContractorID: "cont1",
+				}
+				db.Create(&job)
+
+				// Create new version using SCD abstraction
+				scd.CreateNewSCDVersion(db, jobID, func(j *models.Job) {
+					j.Status = "completed"
+					j.Rate = 150
+				})
 			}
-			db.Create(&job)
+		})
 
-			// Create new version
-			scd.CreateNewSCDVersion(db, jobID, func(j *models.Job) {
-				j.Status = "completed"
-				j.Rate = 150
-			})
-		}
+		// Test equivalent raw SQL
+		b.Run("Raw_SQL_Equivalent", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				jobID := fmt.Sprintf("simple-test-job-raw-%d", i)
+				jobUID := fmt.Sprintf("simple-test-job-uid-raw-%d", i)
+
+				// Create initial version using raw SQL
+				db.Exec(`
+					INSERT INTO jobs (id, version, uid, status, rate, title, company_id, contractor_id) 
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+				`, jobID, 1, jobUID, "active", 100, "Engineer", "comp1", "cont1")
+
+				// Create new version using raw SQL (equivalent to SCD abstraction)
+				// Generate a unique UID for the new version to avoid conflicts
+				newUID := fmt.Sprintf("simple-test-job-uid-raw-new-%d", i)
+				db.Exec(`
+					INSERT INTO jobs (id, version, uid, status, rate, title, company_id, contractor_id)
+					SELECT id, MAX(version) + 1, ?, 'completed', 150, title, company_id, contractor_id
+					FROM jobs 
+					WHERE id = ?
+					GROUP BY id, title, company_id, contractor_id
+				`, newUID, jobID)
+			}
+		})
 	})
 }
 

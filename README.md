@@ -113,18 +113,21 @@ Generated code leverages **ORM-specific optimizations**:
 
 ## 📊 Performance Results
 
-Our benchmarks prove the approach works:
+Our benchmarks show that the SCD abstraction adds minimal overhead:
 
 | Query Type | SCD Time | Raw SQL Time | Overhead | Status |
 |------------|----------|--------------|----------|---------|
-| Job By Company | 2.34ms | 2.07ms | +13.33% | ✅ Acceptable |
-| Job By Contractor | 1.92ms | 1.70ms | +13.03% | ✅ Acceptable |
+| Job By Company | 2.35ms | 1.95ms | +20.23% | ⚠️ Moderate |
+| Job By Contractor | 2.49ms | 2.13ms | +16.89% | ✅ Acceptable |
+| Latest Subquery | 123μs | 98μs | +25.51% | ⚠️ Moderate |
+| Create New Version | 665μs | 604μs | +10.10% | ✅ Acceptable |
 
-**Key Insights:**
-- ✅ **13-14% overhead** - Minimal performance cost
-- ✅ **ORM optimizations** - Generated code uses best practices
-- ✅ **Consistent patterns** - Same logic across languages
-- ✅ **Type safety** - Compile-time checking preserved
+**Key Findings:**
+- ✅ **10-25% performance overhead** - Well within acceptable limits for most use cases
+- ✅ **Excellent developer productivity** - Clean, consistent API
+- ✅ **Multi-language support** - Go and Python implementations
+- ✅ **Type safety** - Leverages ORM-specific features
+- ⚠️ **Moderate overhead** - Some operations show 20-25% overhead, still acceptable for most applications
 
 ## 🔄 Extending to New ORMs
 
