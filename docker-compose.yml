@@ -11,5 +11,25 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+  python-bench:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=myproject.settings
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=scd
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  go-bench:
+    build:
+      context: ./Go
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DSN=host=db user=postgres password=postgres dbname=scd port=5432 sslmode=disable
 volumes:
   pgdata: 
